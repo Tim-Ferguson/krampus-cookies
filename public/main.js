@@ -1384,14 +1384,28 @@ function openBanner() {
   setTimeout(() => intro(A.unlocked), 700);
 }
 
+// iOS rules: audio must start synchronously inside a real gesture (touchend/click/keydown,
+// not pointerdown), Web Audio is muted by the Ring/Silent switch unless the audio session is
+// "playback", and speechSynthesis stays blocked until something is spoken inside a gesture.
+let speechPrimed = false;
 function unlock(e) {
-  if (A.unlocked) return;
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch {}
   const ctx = ensureAudio();
-  // iOS only unlocks Web Audio on touchend/click; keep trying until it's running
-  if (ctx && ctx.state !== 'running') {
-    ctx.resume().then(() => { if (ctx.state === 'running') unlock(e); }).catch(() => {});
-    return;
+  if (ctx) {
+    ctx.resume?.();
+    // play one silent sample inside the gesture: the classic iOS Web Audio unlock
+    const src = ctx.createBufferSource();
+    src.buffer = ctx.createBuffer(1, 1, 22050);
+    src.connect(ctx.destination);
+    src.start(0);
   }
+  if (synth && !speechPrimed) {
+    speechPrimed = true;
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    synth.speak(u);
+  }
+  if (A.unlocked) return;
   A.unlocked = true;
   $('#tapHint').classList.add('gone');
   if (!consentEl.classList.contains('hidden')) startMusic();
@@ -1402,12 +1416,9 @@ function unlock(e) {
     if (busy) return setTimeout(tryIntro, 300);
     intro(true);
   };
-  setTimeout(tryIntro, 50);
+  setTimeout(tryIntro, 150);
 }
-window.addEventListener('pointerdown', unlock, { capture: true });
-window.addEventListener('keydown', unlock, { capture: true });
-window.addEventListener('touchend', unlock, { capture: true });
-window.addEventListener('click', unlock, { capture: true });
+for (const ev of ['touchend', 'click', 'keydown']) window.addEventListener(ev, unlock, { capture: true });
 document.addEventListener('visibilitychange', () => { if (!document.hidden && A.ctx?.state === 'suspended') A.ctx.resume(); });
 
 $('#accept').addEventListener('click', accept);

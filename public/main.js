@@ -1356,14 +1356,14 @@ function toast(text) {
   t.textContent = text;
   t.classList.add('on');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('on'), 4000);
+  toastTimer = setTimeout(() => t.classList.remove('on'), 6000);
 }
 let renderOff = 0;
 let toastTimer = 0;
 function finish(msg) {
   consentEl.classList.add('hidden');
   stopMusic();
-  toast(msg);
+  toast(`${msg} Tap 🎄 Replay banner to try the other choice.`);
   renderOff = setTimeout(() => { rendering = false; busy = false; }, 600);
 }
 function openBanner() {
@@ -1444,10 +1444,7 @@ frame();
 const auto = params.get('auto');
 if (auto) {
   setTimeout(() => ({ accept, reject, prefs })[auto]?.(), 400);
-} else if (getConsent() && !params.has('fresh')) {
-  consentEl.classList.add('hidden');
-  rendering = false;
-  toast(`Your cookie choice: ${getConsent()}. Tap “Replay banner” to see it again.`);
 } else {
+  // Always open on the banner (even for returning visitors) so people can try both choices.
   setTimeout(() => intro(false), 900);
 }

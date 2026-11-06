@@ -15,10 +15,12 @@ A whimsical 3D cookie-consent banner. You are Santa.
 Static files only: Three.js 0.160 from jsDelivr, Web Audio for sound effects, the browser's `speechSynthesis` for voices.
 
 ```sh
-python3 -m http.server -d public   # then open http://localhost:8000/?fresh
+python3 -m http.server -d public   # then open http://localhost:8000/
 ```
 
-URL params: `?fresh` always shows the banner; `?auto=accept|reject|prefs` plays a sequence (for screenshots).
+The banner opens on every visit so people can try both choices; the choice is still saved as a real `santa_consent` cookie.
+
+URL param: `?auto=accept|reject|prefs` plays a sequence (for screenshots).
 
 ## Deploy
 

@@ -2,7 +2,7 @@
 
 A whimsical 3D cookie-consent banner. You are Santa.
 
-**▶ Live: https://sillycookie.timo.gg** (tap once for sound)
+**▶ Live: https://sillycookies.timo.gg** (tap once for sound)
 
 | Eat the cookies | Reject cookies |
 |---|---|
@@ -22,5 +22,5 @@ URL params: `?fresh` always shows the banner; `?auto=accept|reject|prefs` plays 
 
 ## Deploy
 
-Live at https://sillycookie.timo.gg — an assets-only Cloudflare Worker (`wrangler.jsonc`) serving `public/`.
+Live at https://sillycookies.timo.gg — an assets-only Cloudflare Worker (`wrangler.jsonc`) serving `public/`.
 Pushes to `main` deploy via `.github/workflows/deploy.yml` once the repo has `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. Manual deploy: `npx wrangler deploy`.

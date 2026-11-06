@@ -1,10 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "sillycookie",
+  "name": "sillycookies",
   "compatibility_date": "2026-11-01",
   // Assets-only Worker: no script, Cloudflare serves ./public straight from its edge cache.
   "assets": { "directory": "./public" },
-  "routes": [{ "pattern": "sillycookie.timo.gg", "custom_domain": true }],
+  "routes": [{ "pattern": "sillycookies.timo.gg", "custom_domain": true }],
   "workers_dev": false,
   "observability": { "enabled": false }
 }

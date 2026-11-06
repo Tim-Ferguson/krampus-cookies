@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: sillycookie-production
+  group: sillycookies-production
   cancel-in-progress: true
 
 jobs:

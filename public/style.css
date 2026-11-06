@@ -66,7 +66,7 @@ body {
   position: absolute; transform: translate(-50%, -100%);
   background: #fff; color: var(--ink);
   border: 3px solid var(--ink); border-radius: 18px;
-  padding: 8px 14px; max-width: 280px;
+  padding: 8px 14px; width: max-content; max-width: 280px;
   font-weight: 700; font-size: 18px; line-height: 1.15; text-align: center;
   box-shadow: 4px 4px 0 var(--ink);
   animation: bub .35s cubic-bezier(.2, 1.8, .4, 1) both;

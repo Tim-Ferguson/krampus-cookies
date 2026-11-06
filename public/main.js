@@ -587,6 +587,7 @@ function resetWorld() {
       if (o.material && o.material !== outlineMat) o.material.dispose();
     });
   }
+  tweens.length = 0;
   for (const b of bodies) b.dead = true;
   bodies.length = 0;
   for (const p of particles) scene.remove(p.mesh);
@@ -872,7 +873,7 @@ function positionBubble(b) {
   const w = stage.clientWidth, h = stage.clientHeight;
   if (b.c.side) {
     const px = (tmpV.x + 1) / 2 * w, py = (1 - tmpV.y) / 2 * h;
-    b.el.style.left = `${Math.max(px - 30, b.el.offsetWidth + 6)}px`;
+    b.el.style.left = `${Math.min(Math.max(px - 30, b.el.offsetWidth + 6), w - 6)}px`;
     b.el.style.top = `${Math.max(py - 50, b.el.offsetHeight + 8)}px`;
     return;
   }
@@ -1056,6 +1057,8 @@ const VOICES = {
   santa: { lang: 'en', pitch: 0.2, rate: 0.75, prefer: ['Daniel', 'Fred', 'Google UK English Male', 'Alex'] },
 };
 const synth = window.speechSynthesis;
+const liveUtterances = new Set(); // Chrome drops onend for GC'd utterances
+let lastCancel = 0;
 function pickVoice(lang, prefer) {
   const vs = synth?.getVoices() || [];
   for (const n of prefer) {
@@ -1077,18 +1080,22 @@ function say(text, who) {
     u.pitch = cfg.pitch;
     u.rate = cfg.rate;
     let done = false;
-    const fin = () => { if (!done) { done = true; res(); } };
+    const fin = () => { if (!done) { done = true; liveUtterances.delete(u); res(); } };
     u.onend = fin;
     u.onerror = fin;
-    setTimeout(fin, (est * 2 + 2) * 1000);
-    synth.speak(u);
+    u.onstart = () => setTimeout(fin, (est * 2 + 1) * 1000);
+    setTimeout(fin, (est * 2 + 8) * 1000); // in case it never starts
+    liveUtterances.add(u);
+    const gap = 80 - (performance.now() - lastCancel);
+    if (gap > 0) setTimeout(() => synth.speak(u), gap); else synth.speak(u);
   });
 }
 async function line(c, de, en, { cls = '', hold = 0.5, who = c.name } = {}) {
   const b = bubble(c, de, en, cls);
+  const tok = (c.talkTok = (c.talkTok || 0) + 1);
   c.talking = true;
   await say(de.replace(/<[^>]+>/g, ''), who);
-  c.talking = false;
+  if (c.talkTok === tok) c.talking = false;
   await wait(hold);
   b.remove();
 }
@@ -1103,6 +1110,7 @@ function claim() {
   if (chatter) {
     chatter = 0;
     synth?.cancel();
+    lastCancel = performance.now();
     for (const b of [...bubbles]) b.remove();
     for (const c of [W.hans, W.greta]) { c.talking = false; c.mode = 'idle'; }
   }
@@ -1347,15 +1355,23 @@ function toast(text) {
   const t = $('#toast');
   t.textContent = text;
   t.classList.add('on');
-  setTimeout(() => t.classList.remove('on'), 4000);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('on'), 4000);
 }
+let renderOff = 0;
+let toastTimer = 0;
 function finish(msg) {
   consentEl.classList.add('hidden');
+  stopMusic();
   toast(msg);
-  setTimeout(() => { rendering = false; }, 600);
-  busy = false;
+  renderOff = setTimeout(() => { rendering = false; busy = false; }, 600);
 }
 function openBanner() {
+  clearTimeout(renderOff);
+  clearTimeout(toastTimer);
+  $('#toast').classList.remove('on');
+  $('#subtitle').classList.remove('on');
+  stage.classList.remove('shake');
   resetWorld();
   rendering = true;
   consentEl.classList.remove('hidden');
@@ -1370,10 +1386,15 @@ function openBanner() {
 
 function unlock(e) {
   if (A.unlocked) return;
+  const ctx = ensureAudio();
+  // iOS only unlocks Web Audio on touchend/click; keep trying until it's running
+  if (ctx && ctx.state !== 'running') {
+    ctx.resume().then(() => { if (ctx.state === 'running') unlock(e); }).catch(() => {});
+    return;
+  }
   A.unlocked = true;
-  ensureAudio();
   $('#tapHint').classList.add('gone');
-  startMusic();
+  if (!consentEl.classList.contains('hidden')) startMusic();
   // first tap anywhere: replay the greeting with real voices
   if (e?.target?.closest?.('button')) return;
   const tryIntro = () => {
@@ -1385,6 +1406,9 @@ function unlock(e) {
 }
 window.addEventListener('pointerdown', unlock, { capture: true });
 window.addEventListener('keydown', unlock, { capture: true });
+window.addEventListener('touchend', unlock, { capture: true });
+window.addEventListener('click', unlock, { capture: true });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && A.ctx?.state === 'suspended') A.ctx.resume(); });
 
 $('#accept').addEventListener('click', accept);
 $('#reject').addEventListener('click', reject);

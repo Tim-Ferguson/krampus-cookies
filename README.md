@@ -2,6 +2,12 @@
 
 A whimsical 3D cookie-consent banner. You are Santa.
 
+**▶ Live: https://sillycookie.timo.gg** (tap once for sound)
+
+| Eat the cookies | Reject cookies |
+|---|---|
+| ![Accept: cartoon Merkel thanks Santa](docs/accept.png) | ![Reject: it's Krampus!](docs/reject.png) |
+
 - **Eat the cookies** → Santa munches the cookies and milk, then a cartoon Angela Merkel arrives to thank you. Sets `santa_consent=accepted`.
 - **Reject cookies** → "Nein! Das ist nicht Sinterklaus! Das ist KRAMPUS!!" The kids flip the table and run. Sets `santa_consent=rejected`.
 - **Manage preferences** → there are only cookies… or Krampus.

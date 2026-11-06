@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Plätzchen &amp; Co.</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍪</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Mountains+of+Christmas:wght@700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+  <!-- The "real" website sitting behind the banner -->
+  <header class="site-head">
+    <div class="logo">🍪 Plätzchen &amp; Co.</div>
+    <nav><a href="#">Lebkuchen</a><a href="#">Spekulatius</a><a href="#">Stollen</a></nav>
+  </header>
+  <main class="site">
+    <section class="hero">
+      <h1>Hand-rolled Christmas cookies from the Black Forest</h1>
+      <p>Baked every morning in Freiburg. Shipped in tins by Friday.</p>
+      <a class="cta" href="#">Shop the advent box — €24</a>
+    </section>
+    <section class="grid">
+      <article><div class="ph" style="--c:#c9853f">🫚</div><h3>Lebkuchen</h3><p>Honey, almond, candied orange. 12 per tin.</p><b>€9.50</b></article>
+      <article><div class="ph" style="--c:#a0522d">🌀</div><h3>Spekulatius</h3><p>Windmill-stamped spice biscuits. 20 per tin.</p><b>€7.00</b></article>
+      <article><div class="ph" style="--c:#e8d9b5">⭐</div><h3>Zimtsterne</h3><p>Cinnamon stars with meringue tops. 16 per tin.</p><b>€8.25</b></article>
+    </section>
+  </main>
+
+  <!-- The cookie banner -->
+  <div id="consent" class="consent" aria-live="polite">
+    <div class="card">
+      <div class="stage">
+        <canvas id="scene"></canvas>
+        <div id="bubbles"></div>
+        <div id="subtitle" class="subtitle"></div>
+        <div id="horns" class="horns" aria-hidden="true">
+          <svg viewBox="0 0 200 170" class="horn l"><defs><linearGradient id="hgl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a0505"/><stop offset=".6" stop-color="#5a1a10"/><stop offset="1" stop-color="#e8d6b0"/></linearGradient></defs><path fill="url(#hgl)" d="M0 0 L95 0 C100 60 135 110 196 162 C120 150 55 115 0 80 Z"/><path d="M30 0 C40 30 34 50 8 56 M64 0 C70 44 58 72 30 90 M92 30 C98 70 86 100 64 112 M118 82 C124 104 116 124 100 132" stroke="#000" stroke-opacity=".35" stroke-width="5" fill="none"/></svg>
+          <svg viewBox="0 0 200 170" class="horn r"><defs><linearGradient id="hgr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a0505"/><stop offset=".6" stop-color="#5a1a10"/><stop offset="1" stop-color="#e8d6b0"/></linearGradient></defs><path fill="url(#hgr)" d="M0 0 L95 0 C100 60 135 110 196 162 C120 150 55 115 0 80 Z"/><path d="M30 0 C40 30 34 50 8 56 M64 0 C70 44 58 72 30 90 M92 30 C98 70 86 100 64 112 M118 82 C124 104 116 124 100 132" stroke="#000" stroke-opacity=".35" stroke-width="5" fill="none"/></svg>
+        </div>
+        <button id="mute" class="mute" title="Sound">🔊</button>
+        <div id="tapHint" class="tap-hint">👆 tap anywhere for sound</div>
+      </div>
+      <div class="panel">
+        <div class="copy">
+          <h2>Ho ho ho, Santa! 🎅</h2>
+          <p>Hans and Greta left you cookies and a glass of milk. This website would also like to leave you some cookies.</p>
+        </div>
+        <div class="actions">
+          <button id="reject" class="btn ghost">Reject cookies</button>
+          <button id="accept" class="btn primary">Eat the cookies 🍪</button>
+        </div>
+        <button id="prefs" class="link">Manage preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <button id="replay" class="replay">🎄 Replay banner</button>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
